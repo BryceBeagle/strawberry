@@ -81,6 +81,7 @@ would be:
     }
 
 A corresponding object-oriented query could be:
+
 .. code-block:: python
 
     Query.books(
