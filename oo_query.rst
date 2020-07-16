@@ -38,6 +38,7 @@ This example has been designed to reflect a number of concepts
 * TODO: Order-by
 * TODO: Multiple queries in one request
 * TODO: Query aliases
+* TODO: Unions
 
 Reference document from Apollo: https://www.apollographql.com/blog/the-anatomy-of-a-graphql-query-6dffa9e9e747/
 
@@ -69,7 +70,7 @@ Using the schema example from the Strawberry docs:
         books: List['Book'] = strawberry.field(resolver=...)
         authors: List['Author'] = strawberry.field(resolver=...)
 
-A string-based query to retrieve information about all books and their others
+A string-based query to retrieve information about all books and their authors
 would be:
 
 .. code-block:: graphql
@@ -171,10 +172,12 @@ The corresponding
 
     result = query.execute()
 
-Here, the ``author`` argument is provided before the ``fields`` argument [1]
+Here, the ``author`` argument is provided before the ``fields`` argument, which
+now uses an explicit keyword. [1]
 
 
 [1] I was torn with leaving the ``fields`` argument at the beginning of the
 arglist *without* a keyword or forcing a keyword argument so it can appear last.
 I decided to go with the latter as I found it much harder to understand what's
-happening if the query's arguments come *after* the ``fields`` set.
+happening if the query's arguments come *after* the ``fields`` set. A user could
+still technically use the other order if they desire.
