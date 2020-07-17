@@ -110,8 +110,9 @@ For now, interpret the callable signature of a query object, in this case
     def books(fields: set, **kwargs) -> strawberry.CompiledQuery:
         ...
 
-The ``fields`` parameter is always required. If the query takes arguments, they
-will be within ``**kwargs``.  The next section will describe such a case.
+The ``fields`` parameter is always required. If the resolver takes arguments,
+they will be provided within ``**kwargs``.  The next section will describe such
+a case.
 
 ``strawberry.CompiledQuery`` is used here as a placeholder for the query
 construction's returned object. It will store the query and can be used using
@@ -123,12 +124,13 @@ provided to ``.execute()``.
 symbols as the string-based queries (``{}``), and fields must be unique, but are
 not ordered. Are GraphQL results guaranteed to be returned in the same order
 they're requested?
+
 [2] I have yet to work out how adding parameters will be described with the
 OO-based patterns.
 
 
-Query with Parameters
-+++++++++++++++++++++
+Resolvers with Parameters
++++++++++++++++++++++++++
 
 In this section, the schema used for reference will be:
 
@@ -154,11 +156,11 @@ In this section, the schema used for reference will be:
             return ...()
         authors: typing.List['Author']
 
-``Query.books`` is now a query that has a couple of parameters. Note that while
-``Query.books`` is now given a signature here, ``fields`` and the other
+``Query.books`` is now a resolver that has a couple of parameters. Note that
+while ``Query.books`` is now given a signature here, ``fields`` and the other
 arguments are added behind the scenes when we actually want to build a query.
 
-A graphql string query that gets the information of all books from the author
+A GraphQL string query that gets the information of all books from the author
 ``John Cena`` would be:
 
 .. code-block:: graphql
