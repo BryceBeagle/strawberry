@@ -24,8 +24,7 @@ should be completely reproducible in this object-oriented system:
         }
     }
 
-This not-at-all practical example has been designed to reflect a number of
-concepts
+This example has been designed to reflect a number of concepts
 
 * Explict operation type (``query``)
 * Operation name (``QueryName``)
@@ -99,7 +98,7 @@ A corresponding object-oriented query could be:
     result = query.execute()
 
 We execute the query ``books`` as a function. For now, only one argument will be
-passed - a list of the fields that we want returned. Other, optional, arguments
+passed - a set [1] of the fields that we want returned. Other, optional, arguments
 will be discussed later. The fields will be the attributes that are defined in
 our schema, as opposed to simple strings.
 
@@ -116,11 +115,15 @@ will be within ``**kwargs``.  The next section will describe such a case.
 
 ``strawberry.CompiledQuery`` is used here as a placeholder for the query
 construction's returned object. It will store the query and can be used using
-its ``.execute()`` method. If the query itself takes arguments [1], they will be
+its ``.execute()`` method. If the query itself takes arguments [2], they will be
 provided to ``.execute()``.
 
 
-[1] I have yet to work out how adding parameters will be described with the
+[1] I'm still not sure if sets or lists would be better. Sets use the same
+symbols as the string-based queries (``{}``), and fields must be unique, but are
+not ordered. Are GraphQL results guaranteed to be returned in the same order
+they're requested?
+[2] I have yet to work out how adding parameters will be described with the
 OO-based patterns.
 
 
