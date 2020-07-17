@@ -2,7 +2,7 @@ Introduction
 ------------
 
 The purpose of this document is to propose a syntax for using
-``@strawberry.type`` objects to create GraphQL queries using object-oriented
+``@strawberry.type`` objects to construct GraphQL queries using object-oriented
 patterns instead of strings.
 
 Provided below is an example of a complicated GraphQL string-based query that
@@ -10,35 +10,36 @@ should be completely reproducible in this object-oriented system:
 
 .. code-block:: graphql
 
-    query QueryName {
-        query1: functionField(argument: "value") {
-            result1,
-            result2
-        }
-        query2: books(author: "Daniel Kahneman", year: 2011) {
+    query DanLibrary($author: Author, $extraInfo: Boolean!) {
+        BooksByAuthor: books(author: $author, includePoems: true) {
             author {
-                name,
+                fullName: name,
                 age
             }
             title,
-            isbn
+            isbn @skip(if: $extraInfo)
+        }
+        MagazinesByAuthor: magazines(author: $author) {
+            publisher
         }
     }
 
-This example has been designed to reflect a number of concepts
+This not-at-all practical example has been designed to reflect a number of
+concepts
 
 * Explict operation type (``query``)
 * Operation name (``QueryName``)
-* TODO: Operation arguments
-* Fields with argument(s)
+* Operation parameters
+* Fields with parameter(s)
 * Nested selection sets
+* Multiple queries in one request
+* Directives
+* Field aliases
 * TODO: Fragments
-* TODO: Directives
-* TODO: Directive arguments
-* TODO: Order-by
-* TODO: Multiple queries in one request
-* TODO: Query aliases
 * TODO: Unions
+
+This document will introduce these concepts gradually and demonstrate how an
+object-oriented approach could represent all of them.
 
 Reference document from Apollo: https://www.apollographql.com/blog/the-anatomy-of-a-graphql-query-6dffa9e9e747/
 
@@ -65,7 +66,7 @@ Using the schema example from the Strawberry docs:
       name: str
       books: List['Book']
 
-    @strawberry.query
+    @strawberry.type
     class Query:
         books: List['Book'] = strawberry.field(resolver=...)
         authors: List['Author'] = strawberry.field(resolver=...)
@@ -107,17 +108,26 @@ For now, interpret the callable signature of a query object, in this case
 
 .. code-block:: python
 
-    def books(query: set, **kwargs) -> strawberry.Query:
+    def books(fields: set, **kwargs) -> strawberry.CompiledQuery:
         ...
 
-The query parameter is always required. If the query takes arguments, they will
-be within ``**kwargs``.  The next section will describe such a case.
+The ``fields`` parameter is always required. If the query takes arguments, they
+will be within ``**kwargs``.  The next section will describe such a case.
+
+``strawberry.CompiledQuery`` is used here as a placeholder for the query
+construction's returned object. It will store the query and can be used using
+its ``.execute()`` method. If the query itself takes arguments [1], they will be
+provided to ``.execute()``.
 
 
-Query with Arguments
-++++++++++++++++++++
+[1] I have yet to work out how adding parameters will be described with the
+OO-based patterns.
 
-In section, the schema used will be:
+
+Query with Parameters
++++++++++++++++++++++
+
+In this section, the schema used for reference will be:
 
 .. code-block:: python
 
@@ -141,7 +151,9 @@ In section, the schema used will be:
             return ...()
         authors: typing.List['Author']
 
-``Query.books` is now a query that takes a couple of arguments.
+``Query.books`` is now a query that has a couple of parameters. Note that while
+``Query.books`` is now given a signature here, ``fields`` and the other
+arguments are added behind the scenes when we actually want to build a query.
 
 A graphql string query that gets the information of all books from the author
 ``John Cena`` would be:
@@ -173,7 +185,7 @@ The corresponding
     result = query.execute()
 
 Here, the ``author`` argument is provided before the ``fields`` argument, which
-now uses an explicit keyword. [1]
+now uses an explicit keyword [1]. Everything else remains the same.
 
 
 [1] I was torn with leaving the ``fields`` argument at the beginning of the
