@@ -10,14 +10,14 @@ should be completely reproducible in this object-oriented system:
 
 .. code-block:: graphql
 
-    query DanLibrary($author: Author, $extraInfo: Boolean!) {
+    query Library($author: Author, $extraInfo: Boolean!) {
         BooksByAuthor: books(author: $author, includePoems: true) {
             author {
                 fullName: name,
                 age
             }
             title,
-            isbn @skip(if: $extraInfo)
+            isbn @include(if: $extraInfo)
         }
         MagazinesByAuthor: magazines(author: $author) {
             publisher
