@@ -27,7 +27,7 @@ should be completely reproducible in this object-oriented system:
 This example has been designed to reflect a number of concepts
 
 * Explict operation type (``query``)
-* Operation name (``QueryName``)
+* Operation name (``Library``)
 * Operation parameters
 * Fields with parameter(s)
 * Nested selection sets
